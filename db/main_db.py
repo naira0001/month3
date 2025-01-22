@@ -11,6 +11,7 @@ async def create_db():
         # Создаем таблицы, если их еще нет
     cursor.execute(queries.CREATE_TABLE_store)
     cursor.execute(queries.CREATE_TABLE_products_details)
+    cursor.execute(queries.CREATE_TABLE_collections)
 
 
 async def sql_insert_store(name, size, price, photo, productid):
@@ -22,5 +23,11 @@ async def sql_insert_store(name, size, price, photo, productid):
 async def sql_insert_product_details(productid, category, infoproduct):
     cursor.execute(queries.INSERT_products_details_query,(
         productid, category, infoproduct
+     ))
+    db.commit()
+
+async def sql_insert_collections(collection, productid):
+    cursor.execute(queries.INSERT_collections_query,(
+        collection, productid
      ))
     db.commit()

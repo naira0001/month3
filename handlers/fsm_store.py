@@ -15,6 +15,7 @@ class FsmStore(StatesGroup):
     photo = State()
     productid = State()
     infoproduct = State()
+    collection = State()
     submit = State()
 
 
@@ -78,15 +79,23 @@ async def process_productid(message: types.Message, state: FSMContext):
 async def process_infoproduct(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['infoproduct'] = message.text
+        await message.answer('Какая коллекция ?')
         await FsmStore.next()
+
+async def process_collection(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['collection'] = message.text
         await message.answer('Верные ли данные ?')
+        await FsmStore.next()
         await message.answer_photo(photo=data['photo'],
                                    caption=f'Название - {data["name"]}\n'
                                            f'Размер- {data["size"]}\n'
                                            f'Категория- {data["category"]}\n'
                                            f'Стоимость- {data["price"]}\n'
                                            f'ID продукта {data["productid"]}\n'
-                                           f'Информация: {data["infoproduct"]}', reply_markup=buttons.submit)
+                                           f'Информация: {data["infoproduct"]}'
+                                           f'Коллекция: {data["collection"]}',
+                                                reply_markup=buttons.submit)
 
 
 async def submit(message: types.Message, state: FSMContext):
@@ -104,6 +113,12 @@ async def submit(message: types.Message, state: FSMContext):
                 category=data['category'],
                 infoproduct=data['infoproduct']
             )
+            await main_db.sql_insert_collections(
+                collection=data['collection'],
+                productid=data['productid']
+
+            )
+
             await message.answer('Ваши данные в базе', reply_markup=buttons.remove_keyboard)
         await state.finish()
     elif message.text == 'нет':
@@ -131,6 +146,7 @@ def register_handlers_fsm_store(dp: Dispatcher):
     dp.register_message_handler(process_photo, state=FsmStore.photo, content_types=['photo'])
     dp.register_message_handler(process_productid, state=FsmStore.productid)
     dp.register_message_handler(process_infoproduct, state=FsmStore.infoproduct)
+    dp.register_message_handler(process_collection, state=FsmStore.collection)
     dp.register_message_handler(submit, state=FsmStore.submit)
 
 

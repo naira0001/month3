@@ -20,6 +20,13 @@ CREATE_TABLE_products_details = '''
     infoproduct TEXT
 )
 '''
+CREATE_TABLE_collections = '''
+    CREATE TABLE IF NOT EXISTS collections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    collection TEXT,
+    productid INTEGER
+)
+'''
 
 INSERT_store_query = """
     INSERT INTO store (name,size,price,photo,productid)
@@ -28,4 +35,8 @@ INSERT_store_query = """
 INSERT_products_details_query = """
     INSERT INTO products_details (productid,category,infoproduct)
     VALUES (?,?,?)
+"""
+INSERT_collections_query = """
+    INSERT INTO collections (collection,productid)
+    VALUES (?,?)
 """

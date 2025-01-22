@@ -9,7 +9,7 @@ start = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2).add(
     KeyboardButton('/quiz'),
     KeyboardButton('/reply_webapp'),
     KeyboardButton('/inline_webapp'),
-    KeyboardButton('/registration'))
+    KeyboardButton('/store'))
 
 
 submit = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2, one_time_keyboard=True).add(KeyboardButton('да'), KeyboardButton('нет'))
