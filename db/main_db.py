@@ -20,7 +20,7 @@ async def sql_insert_store(name, size, price, photo, productid):
     ))
     db.commit()
 
-async def sql_insert_product_details(productid, category, infoproduct):
+async def sql_insert_products_details(productid, category, infoproduct):
     cursor.execute(queries.INSERT_products_details_query,(
         productid, category, infoproduct
      ))
@@ -56,3 +56,26 @@ def delete_product(productid):
     conn.execute('DELETE FROM collections WHERE productid = ?', (productid,))
     conn.commit()
     conn.close()
+
+# CRUD - update
+# ==================================================================
+def update_product_field(productid, field_name, new_value):
+    conn = get_db_connection()
+    store_table = ['name', 'size', 'price', 'photo']
+    products_details_table = ['category', 'infoproduct']
+    collections_table = ['collection']
+    try:
+        if field_name in store_table:
+            query = f"UPDATE store SET {field_name} = ? WHERE productid = ?"
+        elif field_name in products_details_table:
+            query = f"UPDATE products_details SET {field_name} = ? WHERE productid = ?"
+        elif field_name in collections_table:
+            query = f"UPDATE collections SET {field_name} = ? WHERE productid = ?"
+        else:
+            raise ValueError(f'Нет такого поля как {field_name}')
+        conn.execute(query, (new_value, productid))
+        conn.commit()
+    except sqlite3.OperationalError as e:
+        print(f'Ошибка - {e}')
+    finally:
+        conn.close()
