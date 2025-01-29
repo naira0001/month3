@@ -1,9 +1,12 @@
 from aiogram import executor
 import logging
 from config import bot, Admins, dp
-from handlers import commands, echo, quiz, webapp , fsm_store
+from handlers import (commands, echo, quiz, webapp, fsm_store,
+                      send_products, delete_products)
 from buttons import start
 from db import main_db
+
+
 
 async def on_startup(_):
     for admin in Admins:
@@ -12,9 +15,13 @@ async def on_startup(_):
     await main_db.create_db()
 
 commands.register_handlers(dp)
-quiz.register_handlers(dp)
+#quiz.register_handlers(dp)
 webapp.register_handlers(dp)
+
 fsm_store.register_handlers_fsm_store(dp)
+send_products.register_handlers(dp)
+delete_products.register_handlers(dp)
+
 
 echo.register_handlers(dp)
 
